@@ -1,0 +1,63 @@
+feature,category,dtype,missing,missing_pct
+ret_1h_close,returns / momentum,float64,0,0.0
+log_ret_1h_close,returns / momentum,float64,0,0.0
+ret_3h,returns / momentum,float64,0,0.0
+log_ret_3h,returns / momentum,float64,0,0.0
+ret_6h,returns / momentum,float64,0,0.0
+log_ret_6h,returns / momentum,float64,0,0.0
+ret_12h,returns / momentum,float64,0,0.0
+log_ret_12h,returns / momentum,float64,0,0.0
+ret_24h,returns / momentum,float64,0,0.0
+log_ret_24h,returns / momentum,float64,0,0.0
+ret_48h,returns / momentum,float64,0,0.0
+log_ret_48h,returns / momentum,float64,0,0.0
+ret_72h,returns / momentum,float64,0,0.0
+log_ret_72h,returns / momentum,float64,0,0.0
+range_pct,volatility,float64,0,0.0
+body_pct,candlestick,float64,0,0.0
+body_abs_pct,candlestick,float64,0,0.0
+upper_shadow_pct,candlestick,float64,0,0.0
+lower_shadow_pct,candlestick,float64,0,0.0
+body_to_range,candlestick,float64,0,0.0
+close_loc,other,float64,0,0.0
+bar_up,other,int64,0,0.0
+bar_down,time / seasonality,int64,0,0.0
+gap_open_prev_close,other,float64,0,0.0
+close_to_sma_6,trend / moving average,float64,0,0.0
+close_to_sma_12,trend / moving average,float64,0,0.0
+close_to_sma_24,trend / moving average,float64,0,0.0
+close_to_sma_48,trend / moving average,float64,0,0.0
+close_to_sma_72,trend / moving average,float64,0,0.0
+close_to_ema_6,trend / moving average,float64,0,0.0
+close_to_ema_12,trend / moving average,float64,0,0.0
+close_to_ema_24,trend / moving average,float64,0,0.0
+close_to_ema_48,trend / moving average,float64,0,0.0
+close_to_ema_72,trend / moving average,float64,0,0.0
+sma_cross_6_24,trend / moving average,float64,0,0.0
+sma_cross_12_48,trend / moving average,float64,0,0.0
+ema_cross_12_24,trend / moving average,float64,0,0.0
+vol_6h,volatility,float64,0,0.0
+vol_24h,volatility,float64,0,0.0
+vol_72h,volatility,float64,0,0.0
+downside_vol_24h,volatility,float64,0,0.0
+downside_vol_72h,volatility,float64,0,0.0
+atr_14_pct,volatility,float64,0,0.0
+rsi_14,oscillator,float64,0,0.0
+macd_line_pct,oscillator,float64,0,0.0
+macd_signal_pct,oscillator,float64,0,0.0
+macd_hist_pct,oscillator,float64,0,0.0
+log_volume,volatility,float64,0,0.0
+log_quote_volume,volatility,float64,0,0.0
+log_trades,volume / activity,float64,0,0.0
+vol_z_24,volatility,float64,0,0.0
+quote_vol_z_24,volatility,float64,0,0.0
+trades_z_24,volume / activity,float64,0,0.0
+vol_ratio_24,volatility,float64,0,0.0
+quote_vol_ratio_24,volatility,float64,0,0.0
+taker_buy_base_share,other,float64,0,0.0
+taker_buy_quote_share,other,float64,0,0.0
+order_flow_imbalance,volume / activity,float64,0,0.0
+hour_sin,time / seasonality,float64,0,0.0
+hour_cos,time / seasonality,float64,0,0.0
+dow_sin,time / seasonality,float64,0,0.0
+dow_cos,time / seasonality,float64,0,0.0
