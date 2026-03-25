@@ -16,6 +16,10 @@ data/features/
 *.parquet
 *.feather
 *.h5
+eda_outputs/
+data/engineered_features/*.csv
+data/split_data/*.csv
+data/raw/*.csv
 
 # Logs
 *.log
