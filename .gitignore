@@ -11,11 +11,31 @@ venv/
 .idea/
 .DS_Store
 
-# Generated outputs (can be regenerated)
+# Generated data (can be regenerated)
 data/features/
+data/split_data/
+data/engineered_features/
 *.parquet
 *.feather
 *.h5
+
+# Model outputs
+models/
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.pth
+
+# Results and backtest outputs
+result/
+
+# EDA outputs (figures and tables)
+eda_outputs/
+
+# Documentation build outputs
+docs/_build/
+docs/build/
 
 # Logs
 *.log
