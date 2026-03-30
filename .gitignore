@@ -10,25 +10,26 @@ venv/
 # IDE / OS
 .idea/
 .DS_Store
+.claude/
 
-# Generated data (can be regenerated)
-data/features/
-data/split_data/
-data/engineered_features/
+# Local scratch / temporary files
+_notebook_code_dump.txt
+_nb_review.txt
+tmp/
+temp/
+*.tmp
+*.bak
+ptxas
+
+# Binary data formats not used for this repo snapshot
 *.parquet
 *.feather
 *.h5
 
-# Model outputs
-models/
+# Generic model binaries not produced in tracked directories
 *.pkl
-*.joblib
-*.h5
 *.pt
 *.pth
-
-# Results and backtest outputs
-result/
 
 # EDA outputs (figures and tables)
 eda_outputs/

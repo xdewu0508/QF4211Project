@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    "long_model.keras",
+    "short_model.keras",
+    "long_scaler.joblib",
+    "short_scaler.joblib",
+    "metadata.json"
+  ],
+  "asset": "SOL",
+  "feature_set": "ohlc_raw",
+  "features": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "number_of_trades",
+    "volume",
+    "hour_sin",
+    "hour_cos"
+  ],
+  "lookback_hours": 24,
+  "model": "GRU"
+}
