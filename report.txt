@@ -1,0 +1,121 @@
+Results and Discussion
+
+This report summarizes the main empirical findings of the project in a format aligned with the reference paper "Deep learning and technical analysis in cryptocurrency market", while reflecting the broader project scope described in docs/guide.md and the group proposal. The project evaluates machine-learning strategies, rule-based benchmarks, and buy-and-hold across BTC, ETH, XRP, and SOL using hourly Binance data from 2021 to 2025 under both no-cost and with-cost settings.
+
+1. Overall performance across strategy types
+
+The strongest results come from long-only strategies. In the pooled feasible results, long-only delivers the highest average test Sharpe ratio and the highest cumulative return before transaction costs. Based on result/summary_all_strategies_feasible.csv, the average test Sharpe for long-only is 0.0612 in the no-cost case, compared with 0.0158 for long-short and -0.0014 for short-only. After transaction costs are applied, long-only remains the most resilient category, although its average cumulative return turns negative on aggregate. This supports the proposal's emphasis on comparing realistic net performance after costs rather than only signal quality.
+
+Short-only strategies are much weaker. While some short models achieve high recall, their test Sharpe and average returns are generally poor, especially after costs. Long-short strategies improve coverage relative to long-only, but their turnover is high and transaction costs materially erode performance.
+
+2. Model-family comparison
+
+The model comparison broadly supports the paper's claim that deep learning can be competitive, but the evidence is more mixed in this multi-asset setting than in the original Bitcoin-only study.
+
+From result/paper_tables/table12_feasible_bundle.csv:
+
+- GRU has the highest average test Sharpe among all models for pooled long-only strategies in both no-cost and with-cost settings.
+- LightGBM and Logistic Regression are close competitors and often produce more economically meaningful strategies with broader trade coverage.
+- XGBoost is generally weaker than Logistic Regression, LightGBM, and GRU.
+- The rule-based benchmarks SMA and RSI are useful baselines but do not dominate the machine-learning models in the headline results.
+
+At the asset level, the strongest "best configuration" results are:
+
+- BTC: GRU with ohlc_extended, long_only
+- ETH: GRU with candle_extended, long_only
+- SOL: LightGBM with candle_extended, long_only
+- XRP: Logistic Regression with candle_extended, long_only
+
+However, the BTC GRU winner should be interpreted cautiously. It achieves a very high test Sharpe, but it only trades 6 times on the test set, so it is a high-precision, low-coverage strategy rather than a broadly robust one.
+
+3. OHLC versus candlestick representation
+
+The representation comparison is more favorable to standard OHLC than to candlestick transformation in the pooled results. In result/paper_tables/table10_feasible_bundle.csv, OHLC has higher average test Sharpe than candle in all-assets long-only for both no-cost and with-cost settings.
+
+The bootstrap tests in result/stat_tests/paper_group_bootstrap_tests_feasible.csv reinforce this conclusion:
+
+- all-assets long-only with cost: candle minus OHLC mean net return difference is negative, p = 0.0135
+- all-assets long-only no cost: candle minus OHLC mean net return difference is negative, p = 0.0475
+
+These results indicate that OHLC representation is statistically preferable to candle representation for the pooled long-only case. This differs somewhat from the intuition in technical analysis that candle encoding should be more informative, suggesting that the direct OHLC representation may preserve signal more effectively in this dataset.
+
+4. Raw versus extended feature sets
+
+The feature-ablation results are generally supportive of the extended feature set. In result/paper_tables/table11_feasible_bundle.csv, the extended feature set outperforms the raw feature set in pooled long-only test Sharpe and average return under both cost regimes. Extended features also improve long-short performance in the pooled no-cost results.
+
+The statistical tests show that the improvement is not uniform across every setting, but there is still meaningful evidence in favor of technical indicators:
+
+- all-assets long-short with cost: extended beats raw, p = 0.0336
+- BTC short-only with cost: extended beats raw, p = 0.0021
+- SOL long-only with cost: extended beats raw, p = 0.0070
+- SOL long-only no cost: extended beats raw, p = 0.0493
+
+Overall, the project supports the paper's broader claim that technical-analysis-style engineered features can add value, especially when moving beyond pure raw price inputs.
+
+5. Best configurations and cross-asset differences
+
+The best configurations vary substantially by asset, which is one of the main differences between this project and the reference paper.
+
+BTC is the hardest asset to improve upon economically because buy-and-hold is already strong. The best strategy by test Sharpe is a GRU long-only model, but it trades very infrequently and does not offer a convincing improvement over buy-and-hold.
+
+ETH shows clearer support for machine learning. The best feasible configuration is GRU with candle_extended in the long-only setting, and this strategy has positive and statistically nonzero mean net return versus zero in the no-cost case.
+
+SOL is one of the strongest cases for ML-based active trading. LightGBM with extended features and long-only positioning produces one of the best combinations of Sharpe, return, and trade count. It is also one of the few cases with strong statistical support versus zero.
+
+XRP produces the highest cumulative-return active strategies, especially with Logistic Regression and extended features, but XRP buy-and-hold is also extremely strong. This means the active strategies are attractive in isolation but still fail to statistically outperform the passive benchmark.
+
+6. Transaction-cost impact
+
+Transaction costs are a major determinant of performance and should be emphasized in the final report because they are central to the proposal's research question.
+
+The pooled averages show a clear deterioration when moving from no-cost to with-cost:
+
+- long-only cumulative return drops from 0.3195 to -0.0536
+- long-short cumulative return drops from 0.1535 to -0.4567
+- short-only cumulative return drops from 0.0065 to -0.4193
+
+This confirms that many strategies that appear acceptable before costs are not robust after realistic Binance-style execution costs. The cost-drag tables in result/paper_tables/cost_drag_summary_by_asset_model_strategy_feasible.csv show that high-turnover strategies are the most affected. This is especially damaging for short-only and long-short strategies.
+
+7. Comparison with buy-and-hold
+
+The buy-and-hold benchmark remains difficult to beat. From result/buy_and_hold/summary_all_assets.csv:
+
+- BTC buy-and-hold cumulative return is 0.4010
+- ETH buy-and-hold cumulative return is 0.1673
+- XRP buy-and-hold cumulative return is 2.0132
+- SOL buy-and-hold cumulative return is -0.1723
+
+The usefulness tests in result/stat_tests/usefulness_tests_best_overall_feasible.csv show that several best strategies have positive mean net return and, in a few cases, statistically significant performance relative to zero. The strongest examples are:
+
+- ETH GRU candle_extended long_only no_cost: p-value vs 0 = 0.0376
+- SOL LightGBM ohlc_extended long_only no_cost: p-value vs 0 = 0.0032
+- SOL LightGBM ohlc_extended long_only with_cost: p-value vs 0 = 0.0083
+
+However, the same tests do not show statistically significant outperformance versus buy-and-hold. In other words, the project finds evidence that some active ML strategies are useful in absolute terms, but not strong enough to conclusively dominate passive holding over the test period.
+
+8. Relation to the reference paper
+
+The current findings are partially consistent with the reference paper but not identical.
+
+Consistent findings:
+
+- machine-learning strategies can generate viable trading signals
+- deep learning, especially GRU, is competitive in several headline results
+- technical indicators in the extended feature set often improve performance
+
+Differences from the paper:
+
+- GRU is not uniformly superior across all assets and all strategy modes
+- OHLC representation appears stronger than candle representation in the pooled long-only results
+- transaction costs eliminate much of the apparent edge in active trading
+- buy-and-hold remains a very strong benchmark, particularly for XRP and BTC
+
+These differences are plausible because the project expands the analysis from one asset to four assets, extends the sample to 2021-2025, and explicitly focuses on cost-aware evaluation.
+
+9. Final conclusion
+
+The main conclusion is that machine-learning-based technical trading strategies can produce meaningful trading signals in cryptocurrency markets, but their practical value is highly conditional on asset choice, feature design, and transaction costs.
+
+Among the tested approaches, long-only strategies are the most robust. GRU is often among the strongest models, but simpler models such as Logistic Regression and LightGBM remain highly competitive and sometimes more robust economically. Extended technical-indicator features generally help, while OHLC representation performs better than candle representation in the pooled long-only analysis. Once realistic transaction costs are included, the advantage of many active strategies becomes much smaller, and none of the current best strategies convincingly outperform buy-and-hold at conventional significance levels.
+
+For the final write-up, the project should therefore present its contribution as a realistic and cost-aware comparative study. The evidence supports the usefulness of machine learning for signal generation, but it does not support a strong claim that active ML-based technical trading consistently dominates passive cryptocurrency exposure across assets.

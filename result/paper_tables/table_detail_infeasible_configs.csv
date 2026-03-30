@@ -1,13 +1,1 @@
-Asset,Model,Model Family,Feature Set,Strategy Mode,Cost Regime,Validation Trades,Validation Signal Ratio,Validation Precision,Validation Recall,Validation Sharpe,Test Precision,Test Recall,Test Sharpe,Number of Trades,Log Path
-BTC,GRU,ML,ohlc_raw,short_only,no_cost,,,,,,,0.0,,0.0,data/trading_logs/no_cost/short_only/gru/ohlc_raw/btc/trading_log.csv
-BTC,GRU,ML,ohlc_raw,short_only,with_cost,,,,,,,0.0,,0.0,data/trading_logs/with_cost/short_only/gru/ohlc_raw/btc/trading_log.csv
-ETH,GRU,ML,candle_raw,long_only,no_cost,,,,,,,0.0,,0.0,data/trading_logs/no_cost/long_only/gru/candle_raw/eth/trading_log.csv
-ETH,GRU,ML,candle_raw,long_only,with_cost,,,,,,,0.0,,0.0,data/trading_logs/with_cost/long_only/gru/candle_raw/eth/trading_log.csv
-ETH,GRU,ML,ohlc_raw,short_only,no_cost,,,,,,,0.0,,0.0,data/trading_logs/no_cost/short_only/gru/ohlc_raw/eth/trading_log.csv
-ETH,GRU,ML,ohlc_raw,short_only,with_cost,,,,,,,0.0,,0.0,data/trading_logs/with_cost/short_only/gru/ohlc_raw/eth/trading_log.csv
-SOL,GRU,ML,candle_raw,long_only,no_cost,,,,,,,0.0,,0.0,data/trading_logs/no_cost/long_only/gru/candle_raw/sol/trading_log.csv
-SOL,GRU,ML,candle_raw,long_only,with_cost,,,,,,,0.0,,0.0,data/trading_logs/with_cost/long_only/gru/candle_raw/sol/trading_log.csv
-XRP,GRU,ML,candle_raw,short_only,no_cost,,,,,,,0.0,,0.0,data/trading_logs/no_cost/short_only/gru/candle_raw/xrp/trading_log.csv
-XRP,GRU,ML,ohlc_raw,short_only,no_cost,,,,,,0.0,0.0,-0.7856628807796363,4.0,data/trading_logs/no_cost/short_only/gru/ohlc_raw/xrp/trading_log.csv
-XRP,GRU,ML,candle_raw,short_only,with_cost,,,,,,,0.0,,0.0,data/trading_logs/with_cost/short_only/gru/candle_raw/xrp/trading_log.csv
-XRP,GRU,ML,ohlc_raw,short_only,with_cost,,,,,,0.0,0.0,-0.7886722222566884,4.0,data/trading_logs/with_cost/short_only/gru/ohlc_raw/xrp/trading_log.csv
+
