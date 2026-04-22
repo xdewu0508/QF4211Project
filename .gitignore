@@ -35,12 +35,11 @@ ptxas
 eda_outputs/
 
 # Re-generated experiment artifacts
-data/engineered_features/
-data/split_data/
-data/trading_logs/
-models/
-result/
-out/
+#data/engineered_features/
+#data/split_data/
+#data/trading_logs/
+#models/
+#result/
 
 # Generated report renders
 report/final_report.pdf
