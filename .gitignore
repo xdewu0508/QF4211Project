@@ -49,6 +49,11 @@ report/final_report.html
 # Archived local-only materials
 docs/archive/
 report/archive/
+docs/_extracted/
+docs/DSE_QF4211 Group 3 Proposal.docx
+report/DSE_QF4211 Group 3.docx
+report/Peer Review Suggestions.docx
+report/Rebuttal.docx
 
 # Legacy notebooks / helper scripts kept only if needed locally
 buy_and_hold.ipynb
