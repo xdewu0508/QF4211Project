@@ -1,132 +1,128 @@
 # QF4211 Project Guide
 
-## 0. Overview
+## 1. Canonical Workflow
 
-- Research question: compare machine-learning trading signals, classic indicator-driven rules, and buy-and-hold across four crypto assets under both `with_cost` and `no_cost` settings.
+- The only authoritative execution pipeline is `project.ipynb`.
+- The notebook performs the full workflow end to end:
+  - feature engineering from raw Binance hourly data,
+  - chronological train / validation / test splitting,
+  - unified model and rule-based backtests,
+  - export of paper-style tables, statistical tests, plots, and standardized trading logs.
+- The repo’s editable written submission is `report/final_report.tex`.
+
+## 2. Repository Structure
+
+- `data/raw/` contains the tracked Binance market inputs needed to rerun the project.
+- `data/engineered_features/`, `data/split_data/`, and `data/trading_logs/` are regenerated locally by the notebook and are not tracked in the cleaned repo snapshot.
+- `models/` is regenerated locally by the notebook and is not tracked in the cleaned repo snapshot.
+- `result/` is regenerated locally by the notebook and is not tracked in the cleaned repo snapshot.
+- `docs/Reference/` stores the reference paper and course documents.
+- `report/` stores the final LaTeX report source.
+
+## 3. Scope
+
 - Assets: BTC/USDT, ETH/USDT, XRP/USDT, SOL/USDT.
-- Data: Binance hourly data, 2021-2025.
-- Unified strategy families: Logistic Regression, XGBoost, LightGBM, MLP, LSTM, CNN, GRU, SMA, RSI.
-- Main grid dimensions:
-  - 4 feature sets: `ohlc_raw`, `candle_raw`, `ohlc_extended`, `candle_extended`
-  - 3 strategy modes: `long_only`, `short_only`, `long_short`
-  - 2 cost regimes: `with_cost`, `no_cost`
-  - 4 assets
-- ML models use two binary systems:
-  - `label_up` for long signals
-  - `label_down` for short signals
-- `long_short` combines the two probability systems into `{0, 1, -1}` by comparing which side clears its validation threshold more strongly.
-- Labels are based on next-hour open-to-open log returns.
-- Realized trading PnL is still compounded from the aligned simple open-to-open return series.
-- Optional dependencies are handled explicitly:
-  - `lightgbm` controls LightGBM availability
-  - `tensorflow` controls MLP/LSTM/CNN/GRU availability
-- Parallel sections use a cross-platform worker helper:
-  - first try `os.cpu_count()`
-  - if needed, fall back to `multiprocessing.cpu_count()`
+- Frequency: hourly.
+- Raw data coverage: January 2021 to December 2025.
+- Strategy families:
+  - Buy-and-Hold
+  - Logistic Regression
+  - XGBoost
+  - LightGBM
+  - GRU
+  - SMA
+  - RSI
+- Feature sets:
+  - `ohlc_raw`
+  - `candle_raw`
+  - `ohlc_extended`
+  - `candle_extended`
+- Strategy modes:
+  - `long_only`
+  - `short_only`
+  - `long_short`
+- Cost regimes:
+  - `with_cost`
+  - `no_cost`
 
-## 1. Data and Feature Construction
+## 4. Feature Construction
 
-- Load hourly Binance kline data with price, volume, and trade-count fields.
-- Create paper-aligned raw feature families:
-  - `ohlc_raw`: `open`, `high`, `low`, `close`, `number_of_trades`, `volume`, cyclical hour terms
-  - `candle_raw`: `close`, `candle_body`, `upper_shadow`, `lower_shadow`, `number_of_trades`, `volume`, cyclical hour terms
-- Create paper-aligned extended indicators:
+- `ohlc_raw` uses `open`, `high`, `low`, `close`, `volume`, `number_of_trades`, and cyclical hour terms.
+- `candle_raw` replaces the raw OHLC block with `close`, `candle_body`, `upper_shadow`, and `lower_shadow`, while retaining `volume`, `number_of_trades`, and cyclical hour terms.
+- The paper-aligned extended features add:
   - SMA: `sma_15`, `sma_20`, `sma_25`, `sma_30`
   - RSI: `rsi_15`, `rsi_20`, `rsi_25`, `rsi_30`
   - `macd_line`, `macd_hist`, `wr_14`, `so_14`, `mfi_14`
-- Keep the broader extra engineered features in the notebook for supplementary analysis, but the main paper-style grid uses the paper-aligned feature-set definitions above.
-- Create targets from next-hour open-to-open log return:
-  - `label_up = 1(log return > 0)`
-  - `label_down = 1(log return < 0)`
-- Use chronological splitting: 50% train, 25% validation, 25% test.
+- Additional engineered features remain in the notebook for broader diagnostics, but the paper-style subsets above drive the main comparisons.
+- Targets are based on next-hour open-to-open returns:
+  - `label_up = 1(next-hour log return > 0)`
+  - `label_down = 1(next-hour log return < 0)`
 
-## 2. Model Training and Threshold Selection
+## 5. Modelling Design
 
-- ML models train on the train split only.
-- Validation predictions are generated separately for long and short classifiers.
-- Threshold selection is precision-first:
-  - maximize validation precision
-  - subject to minimum trade-count, minimum signal-ratio, and minimum recall guardrails
-- Guardrails are constraints, not the objective.
-- Tie-breakers remain:
-  - higher recall
-  - higher paper-style Sharpe
-- Rule benchmarks:
-  - `SMA` uses short/long moving-average windows
-  - `RSI` uses selected RSI windows
-- For reporting consistency, SMA and RSI are emitted under each feature-set label even though their signals come from their own rule definitions rather than from the ML input matrix.
+- ML models use two binary classifiers:
+  - a long-side classifier trained on `label_up`
+  - a short-side classifier trained on `label_down`
+- Strategy mappings:
+  - `long_only` -> `{0, 1}`
+  - `short_only` -> `{0, -1}`
+  - `long_short` -> `{0, 1, -1}`
+- In `long_short`, if both sides clear their thresholds simultaneously, the notebook chooses the side with the larger threshold margin.
+- SMA and RSI are not fixed one-shot baselines. They are tuned on validation data and then sent through the same thresholding path as the ML models.
 
-## 3. Backtest Convention
+## 6. Thresholding and Feasibility
 
-- Signal is formed at time `t`.
-- Trade is evaluated on the aligned next-hour open-to-open return already stored in the row.
-- Position sets:
-  - `long_only`: `{0, 1}`
-  - `short_only`: `{0, -1}`
-  - `long_short`: `{0, 1, -1}`
+- Threshold tuning is precision-first on the validation split.
+- A candidate threshold is only considered feasible if it satisfies all three guardrails:
+  - at least `20` trades,
+  - signal ratio of at least `0.2%`,
+  - recall of at least `1%`.
+- Among feasible thresholds, the notebook prioritizes:
+  - higher validation precision,
+  - then higher recall,
+  - then higher paper-style Sharpe.
+- Main report tables and grouped significance tests are built from feasible configurations.
+
+## 7. Backtest Convention
+
+- Signals are formed using information available at hour `t`.
+- If a threshold triggers, the trade enters at the open of hour `t+1`.
+- The trade exits at the open of hour `t+2`.
 - Transaction cost is `0.035%` per unit change in position.
-- Flips from `1` to `-1` or `-1` to `1` count as a double turnover event.
+- A direct flip from `+1` to `-1` or vice versa counts as double turnover.
 
-## 4. Metrics
+## 8. Metrics and Statistical Tests
 
-- Paper-style table metrics:
-  - Precision
-  - Recall
-  - Avg return
-  - Sharpe
-- Here, the notebook’s paper-style Sharpe is computed from signal returns, not from annualized hourly returns.
-- The notebook also keeps additional diagnostics such as cumulative return, turnover, number of trades, maximum drawdown, and annualized Sharpe in the raw summary tables.
+- Main report metric: paper-style Sharpe computed from realized signal returns.
+- Additional diagnostics include:
+  - cumulative return,
+  - annualized Sharpe,
+  - maximum drawdown,
+  - turnover,
+  - number of trades,
+  - precision,
+  - recall.
+- Grouped bootstrap tests follow the paper-oriented comparison structure:
+  - `candle` vs `ohlc`
+  - `extended` vs `raw`
+  - `GRU` vs the remaining ML models
+- Usefulness tests also check:
+  - whether mean strategy return exceeds zero,
+  - whether mean strategy return exceeds buy-and-hold.
 
-## 5. Unified Experiment Grid
+## 9. Reproducibility Notes
 
-- The main notebook workflow runs the unified cross-product over:
-  - 9 strategy families
-  - 4 feature sets
-  - 3 strategy modes
-  - 2 cost regimes
-  - 4 assets
-- Tabular ML tasks are parallelized.
-- Rule-model tuning tasks are parallelized.
-- TensorFlow sequence models are kept sequential for training stability.
-- Each completed configuration saves:
-  - a standardized trading log under `data/trading_logs/`
-  - one row in `data/trading_logs/unified_experiment_summary.csv`
+- `project.ipynb` now seeds Python, NumPy, and TensorFlow from one global seed.
+- TensorFlow deterministic settings are enabled on a best-effort basis, but exact deep-learning replication can still vary across hardware / backend combinations.
+- Binance raw files may mix millisecond and microsecond timestamps; the notebook now normalizes them row-wise before feature engineering.
+- If you want the derived CSVs and report-facing outputs to reflect the latest notebook logic, rerun `project.ipynb` from top to bottom.
 
-## 6. Reporting Outputs
+## 10. Key Outputs
 
-- Section 10 of the notebook exports paper-style tables modeled on FRL:
-  - `Table 8`-style long-only tables
-  - `Table 9`-style short-only tables
-  - long-short analog tables
-  - `Table 10`-style candle vs OHLC summaries
-  - `Table 11`-style raw vs extended summaries
-  - `Table 12`-style model-average summaries
-- These are exported both:
-  - per asset
-  - for all assets combined
-- The notebook also exports:
-  - raw full-grid summaries
-  - representative best-configuration tables
-  - cost-drag comparisons between `with_cost` and `no_cost`
-  - equity-curve PNGs with buy-and-hold overlays
+The following are created automatically when `project.ipynb` is run on a fresh device:
 
-## 7. Statistical Tests
-
-- Grouped bootstrap tests follow the paper’s structure more closely:
-  - compare `candle` vs `ohlc`
-  - compare `extended` vs `raw`
-  - use non-overlapping blocks
-  - use block length `floor(n^(1/3))`
-  - use 10,000 bootstrap iterations
-- Additional usefulness tests are included:
-  - test whether mean strategy net return is greater than zero
-  - test whether mean strategy return exceeds buy-and-hold
-- Bootstrap work is parallelized because it is one of the heavier repeated computations in the notebook.
-
-## 8. Supplementary Outputs
-
-- Section 11 bundles grouped paper-style tables across scopes and saves:
-  - cost-drag summaries by asset, model, and strategy mode
-  - grouped table overviews
-  - representative best-configuration overviews
-- The older ablation block has been replaced by these paper-aligned supplementary exports.
+- `data/engineered_features/`
+- `data/split_data/`
+- `data/trading_logs/`
+- `models/`
+- `result/`

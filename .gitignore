@@ -34,9 +34,37 @@ ptxas
 # EDA outputs (figures and tables)
 eda_outputs/
 
+# Re-generated experiment artifacts
+data/engineered_features/
+data/split_data/
+data/trading_logs/
+models/
+result/
+out/
+
+# Generated report renders
+report/final_report.pdf
+report/final_report.html
+
+# Archived local-only materials
+docs/archive/
+report/archive/
+
+# Legacy notebooks / helper scripts kept only if needed locally
+buy_and_hold.ipynb
+eda_feature_analysis.ipynb
+feature_engineering.ipynb
+logistic_regression.ipynb
+result_analysis.ipynb
+train_val_test_split.ipynb
+xgboost.ipynb
+performance_utils.py
+traditional_models.py
+
 # Documentation build outputs
 docs/_build/
 docs/build/
+docs/archive/final presentation-3.pdf
 
 # Logs
 *.log
