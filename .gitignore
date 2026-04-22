@@ -41,6 +41,16 @@ eda_outputs/
 #models/
 #result/
 
+# Sandbox robustness experiment: keep only notebook + merged raw CSVs
+2020-2024_regime_sandbox/data/engineered_features/
+2020-2024_regime_sandbox/data/split_data/
+2020-2024_regime_sandbox/data/trading_logs/
+2020-2024_regime_sandbox/models/
+2020-2024_regime_sandbox/result/
+2020-2024_regime_sandbox/data/raw/monthly/
+2020-2024_regime_sandbox/data/raw/download_status.csv
+2020-2024_regime_sandbox/data/raw/raw_coverage_summary.csv
+
 # Generated report renders
 report/final_report.pdf
 report/final_report.html
