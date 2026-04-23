@@ -52,8 +52,7 @@ eda_outputs/
 2020-2024_regime_sandbox/data/raw/raw_coverage_summary.csv
 
 # Generated report renders
-report/final_report.pdf
-report/final_report.html
+# report/final_report.pdf
 
 # Archived local-only materials
 docs/archive/
