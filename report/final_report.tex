@@ -1,5 +1,5 @@
 \documentclass[12pt]{article}
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=0.75in]{geometry}
 \usepackage{setspace}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -11,7 +11,10 @@
 \usepackage{longtable}
 \usepackage{enumitem}
 \usepackage{caption}
-
+\usepackage{titlesec}
+\titleformat*{\section}{\Large\bfseries}       % Changes \section to \LARGE (approx. 17pt)
+\titleformat*{\subsection}{\large\bfseries}    % Changes \subsection to \Large (approx. 14pt)
+\titleformat*{\subsubsection}{\normalsize\bfseries} % Changes \subsubsection to \large (approx. 12pt)
 \hypersetup{
     colorlinks=true,
     linkcolor=black,
@@ -26,7 +29,7 @@
 \begin{document}
 
 \begin{center}
-{\LARGE \textbf{A Comparative Backtesting Study of Machine Learning and Rule-Based Trading Strategies in Cryptocurrency Markets}}\\[1.5em]
+{\large \textbf{A Comparative Backtesting Study of Machine Learning and Rule-Based Trading Strategies in Cryptocurrency Markets}}\\[1.5em]
 
 \begingroup
 \singlespacing
@@ -47,35 +50,29 @@ GitHub Repository: \url{https://github.com/xdewu0508/QF4211Project}
 
 \section{Introduction}
 
-Cryptocurrency markets trade continuously, undergo large regime shifts, and lack the conventional valuation anchors that often guide trading in equities or bonds. In such markets, technical trading rules based on price, volume, and momentum remain common, while machine-learning models promise greater flexibility in capturing non-linear and sequential structure. The practical question, however, is not whether a model can generate directional predictions in isolation, but whether those signals survive a realistic backtest once transaction costs and portfolio turnover are taken seriously.
+Cryptocurrency markets trade continuously and lack conventional valuation anchors such as cash flows or earnings. As a result, market participants rely heavily on price action, volume, and technical indicators, while machine-learning models promise greater flexibility in capturing non-linear and sequential structure. The practical issue, however, is not whether a model can generate directional predictions in isolation, but whether those signals survive a realistic backtest once transaction costs and portfolio turnover are taken seriously.
 
 This study therefore asks the following question: To what extent do ML-based trading strategies outperform traditional rule-based strategies and passive buy-and-hold benchmarks in terms of the Sharpe Ratio, once transaction costs and backtesting constraints are applied to major assets such as Bitcoin (BTC), Ethereum (ETH), Ripple (XRP), and Solana (SOL)? We evaluate four machine-learning models (Logistic Regression, XGBoost, LightGBM, and GRU), two traditional rule-based strategies (SMA and RSI), and a buy-and-hold benchmark under long-only, short-only, and long-short structures.
 
-Our contribution is a cost-aware, cross-asset comparison with an additional fixed-window robustness check rather than a claim that machine learning consistently dominates cryptocurrency trading. The main analysis uses the canonical 2021--2025 sample, and the report later compares it with a 2020--2024 rerun that keeps the same pipeline, feature construction, split ratios, models, thresholding rules, and backtesting assumptions. Across both windows, long-only strategies are the most stable active structure and machine-learning models provide pockets of improvement in selected settings, yet they do not deliver robust, statistically significant outperformance over simpler alternatives or passive exposure within the submitted evaluation design.
+Our contribution is a cost-aware, cross-asset comparison with an additional fixed-window robustness check rather than a claim that machine learning consistently dominates cryptocurrency trading. The main analysis uses the canonical 2021--2025 sample, and the report later compares it with a 2020--2024 rerun that keeps the same pipeline, feature construction, split ratios, models, thresholding rules, and backtesting assumptions. Across both windows, long-only strategies are the most stable active structure and machine-learning models provide pockets of improvement in selected settings, yet they do not deliver robust, statistically significant outperformance over simpler active rules or passive buy-and-hold within the current evaluation design.
 
 \section{Literature Review}
 
-\subsection{Traditional Technical Trading in Cryptocurrency Markets}
+Because cryptocurrency assets do not generate cash flows or dividends, technical indicators remain a common decision framework. Hudson and Urquhart (2021) show that technical rules can outperform passive exposure in selected cryptocurrency settings, but Liu et al. (2024) note that indicators such as RSI do not always behave in crypto the way they do in traditional asset classes. Transaction-cost assumptions are also pivotal: Svogun and Baz\'an-Palomino (2022) show that fees can materially change profitability assessments, while studies such as Ratia (2023) and Anghel (2021) focus mainly on long-only designs. The literature therefore leaves open how well rule-based trading survives realistic costs across richer position structures.
 
-Because cryptocurrency assets do not generate cash flows or dividends, market participants often rely on technical indicators such as moving averages and RSI to form trading signals. Prior work has shown that technical rules can outperform passive exposure in some cryptocurrency settings, but the results are highly sensitive to parameter choice, market state, and transaction-cost assumptions. Another gap in the literature is that many studies emphasize long-only designs, leaving the behavior of short-only and long-short structures less examined.
+Against that backdrop, machine-learning approaches have become increasingly common in cryptocurrency forecasting, with linear classifiers, boosted trees, and recurrent networks all used to capture non-linear and temporal structure. Chatzis et al. (2025) report strong results for models such as XGBoost and recurrent networks, but those gains are often studied in more favorable settings than a fee-aware backtest. Belalova et al. (2023) argue that GRU can outperform LSTM when data are limited because its simpler gating structure reduces overfitting risk, while Jabbar and Jalil (2024) emphasize that apparent predictive gains often weaken sharply out of sample. That tension between modelling flexibility and trading robustness motivates our model set.
 
-\subsection{Machine Learning in Trading}
-
-Machine-learning approaches have become increasingly common in cryptocurrency forecasting, with linear models, boosted trees, and recurrent neural networks all appearing in the literature. These models can capture non-linear interactions and temporal dependencies that simple rule-based systems may miss. At the same time, the literature repeatedly warns that strong in-sample performance does not guarantee robust out-of-sample trading gains, especially in non-stationary markets with substantial execution frictions.
-
-\subsection{Positioning Our Study}
-
-This project sits between replication and extension. We adopt the hourly, feature-based cryptocurrency prediction setting of the reference paper, but expand the comparison across four assets and multiple strategy structures while explicitly incorporating a \texttt{0.035\%} transaction fee per unit position change. The study prioritizes economic evaluation rather than raw classification quality: strategies are compared using cumulative return, drawdown, turnover, trading frequency, and Sharpe-style metrics. At the same time, our claims remain deliberately scoped to the submitted evaluation design rather than to all market regimes or all possible crypto trading environments.
+Against this literature, our project sits between replication and extension and is anchored mainly in Goutte et al. (2023), \textit{Deep learning and technical analysis in cryptocurrency market}. We retain its hourly, feature-based framing, but compare ML models, rule-based strategies, and buy-and-hold across four assets and three strategy structures under a common \texttt{0.035\%} transaction fee per unit position change. The study prioritizes economic evaluation rather than raw classification quality, and the report also adds a shifted 2020--2024 rerun to test sensitivity to the evaluation window while keeping the substantive claims deliberately scoped to the submitted design.
 
 \section{Data Description and Preprocessing}
 
 \subsection{Data Source and Assets}
 
-The dataset is drawn from Binance public hourly candlestick files for four liquid USDT spot pairs: BTC/USDT, ETH/USDT, XRP/USDT, and SOL/USDT. These assets were selected to provide a mix of large-cap and higher-beta behavior while keeping the market venue, fee assumptions, and data structure consistent across the analysis.
+The dataset is drawn from Binance public hourly candlestick files for four liquid USDT spot pairs: BTC/USDT, ETH/USDT, XRP/USDT, and SOL/USDT. These assets were selected to provide a mix of large-cap and higher-beta behavior while keeping the market venue, fee assumptions, and data structure consistent across the analysis. BTC and ETH represent larger-cap assets with deeper institutional participation, while XRP and SOL add higher-beta and more regime-sensitive behavior.
 
 \subsection{Sample Period}
 
-The canonical raw hourly files span approximately five years, from January 2021 to December 2025. After forward-return alignment, the main notebook works with \texttt{43,808} usable hourly observations per asset. This window contains multiple market phases, including the 2021 bull market, the 2022 drawdown, the 2023 recovery, the 2024 ETF-driven institutional surge, and the volatile conditions late in 2025. To test whether the late-sample environment materially changes the conclusions, we also rerun the same workflow on a shifted 2020--2024 window in a sandbox environment and compare the results in Section~5 and Appendix~\ref{app:regime}. That extra rerun strengthens the regime-sensitivity discussion, but it still remains a fixed-window comparison rather than full walk-forward validation.
+The canonical raw hourly files span January 2021 to December 2025. After forward-return alignment, the main notebook works with \texttt{43,808} usable hourly observations per asset. This window covers the 2021 bull market, the 2022 drawdown, the 2023 recovery, the 2024 ETF-driven institutional surge, and the volatile conditions late in 2025. To test whether the later sample materially changes the conclusions, we also rerun the same workflow on a shifted 2020--2024 window in a sandbox environment and compare the results in Section~5 and Appendix~\ref{app:regime}. That rerun strengthens the regime-sensitivity discussion, but it remains a fixed-window comparison rather than full walk-forward validation.
 
 Hourly data were retained to remain aligned with the reference paper and to preserve an intraday decision horizon, while still being coarse enough to avoid the extreme noise and execution burden of sub-hourly strategies. Even so, hourly signals remain noisy and turnover-sensitive, which is important when interpreting the final results.
 
@@ -85,7 +82,7 @@ We construct four feature sets. \texttt{ohlc\_raw} uses open, high, low, close, 
 
 \subsection{Train / Validation / Test Split}
 
-Each asset is divided chronologically into \texttt{50\%} training, \texttt{25\%} validation, and \texttt{25\%} testing. Under the main 2021--2025 notebook logic this yields \texttt{21,902} training rows, \texttt{10,950} validation rows, and \texttt{10,952} test rows per asset after the forward-return alignment and split-boundary trimming are applied. The same split protocol is then reapplied to the shifted 2020--2024 rerun so that the robustness comparison changes the window, not the design. This avoids look-ahead bias and provides two clean held-out windows under one common protocol. However, the evidence should still be interpreted as fixed-window out-of-sample performance rather than as proof that the same model rankings will persist under rolling or walk-forward re-estimation across different market regimes.
+Each asset is divided chronologically into \texttt{50\%} training, \texttt{25\%} validation, and \texttt{25\%} testing. Under the main 2021--2025 notebook logic this yields \texttt{21,902} training rows, \texttt{10,950} validation rows, and \texttt{10,952} test rows per asset after forward-return alignment and split-boundary trimming. The same protocol is reapplied to the shifted 2020--2024 rerun so that the robustness comparison changes the window, not the design. The evidence should therefore be read as two fixed-window out-of-sample evaluations, not as proof that the same rankings would persist under walk-forward re-estimation.
 
 \section{Methodology and Model Explanation}
 
@@ -134,7 +131,7 @@ Following the reference paper, the main benchmark is built from compounded signa
 \[
 \text{Sharpe Ratio} = \frac{\text{Average Return}}{\text{Standard Deviation of Return}}
 \]
-where \(R_i\) is the realized one-period return and \(S_i \in \{0,1\}\) indicates whether a signal is active at time \(i\). Operationally, the notebook applies this same compounded-return logic to the realized active net-return sequence: if \(r_j\) denotes the active signal returns, the implementation uses \((\prod_{j=1}^{N_{\text{sig}}}(1+r_j)-1)/N_{\text{sig}}\) in the numerator and divides by the standard deviation of the signal-return sequence. This remains the headline Sharpe metric in the summary tables.
+where \(R_i\) is the realized one-period return and \(S_i \in \{0,1\}\) indicates whether a signal is active at time \(i\). In the notebook, this is implemented on the realized active net-return sequence \(r_j\) by using \((\prod_{j=1}^{N_{\text{sig}}}(1+r_j)-1)/N_{\text{sig}}\) in the numerator and dividing by the standard deviation of the signal-return sequence. This remains the headline Sharpe metric in the summary tables.
 
 We also report annualized Sharpe as a secondary diagnostic:
 \[
@@ -143,7 +140,7 @@ We also report annualized Sharpe as a secondary diagnostic:
 \]
 where \(r_t\) denotes hourly net returns and \(r_f = 0\) in the submitted implementation.
 
-Thresholds are selected on the validation set using a precision-first rule subject to feasibility constraints. Specifically, a candidate threshold must generate at least \texttt{20} trades, a signal ratio of at least \texttt{0.2\%}, and recall of at least \texttt{1\%} before it is considered feasible. Among feasible thresholds, precision is prioritized, with recall and validation Sharpe used only as secondary tie-breakers. This is a deliberate high-confidence signal-selection design: the goal is first to filter noisy trades, then to judge the resulting strategy economically out of sample. The report’s main tables, grouped statistical tests, and representative graphs all focus on these feasible configurations, while infeasible cases are retained separately in diagnostic exports.
+Thresholds are selected on the validation set using a precision-first rule subject to feasibility constraints. A candidate threshold must generate at least \texttt{20} trades, a signal ratio of at least \texttt{0.2\%}, and recall of at least \texttt{1\%} before it is considered feasible. Among feasible thresholds, precision is prioritized, with recall and validation Sharpe used only as secondary tie-breakers. The report’s main tables, grouped statistical tests, and representative graphs focus on these feasible configurations, while infeasible cases are retained separately in diagnostic exports.
 
 \section{Model Performance Evaluation and Analysis}
 
@@ -161,15 +158,15 @@ The same point appears in the positive-Sharpe shares reported in Table~\ref{tab:
 
 \subsection{Model-Level Comparison}
 
-At the family level, Table~\ref{tab:appendix_model_family} and Table~\ref{tab:appendix_c_model_family} show that ML strategies are somewhat stronger than the rule-based benchmarks, but the strength of that advantage is regime-dependent. In the canonical 2021--2025 window, the average feasible test Sharpe is \texttt{0.0275} for ML models versus \texttt{-0.0012} for rule-based strategies in the no-cost case, and \texttt{-0.0004} versus \texttt{-0.0056} after costs. In the 2020--2024 rerun, the corresponding ML averages improve to \texttt{0.0435} and \texttt{0.0162}, while the rule-based averages move only to \texttt{0.0011} and \texttt{-0.0050}. Machine-learning models therefore benefit more from the earlier, more favorable window, especially after costs, but the advantage is still modest rather than decisive.
+At the family level, Table~\ref{tab:appendix_model_family} and Table~\ref{tab:appendix_c_model_family} show that ML strategies are somewhat stronger than the rule-based benchmarks, but the advantage is regime-dependent. In the canonical 2021--2025 window, the average feasible test Sharpe is \texttt{0.0275} for ML models versus \texttt{-0.0012} for rule-based strategies in the no-cost case, and \texttt{-0.0004} versus \texttt{-0.0056} after costs. In the 2020--2024 rerun, the corresponding ML averages improve to \texttt{0.0435} and \texttt{0.0162}, while the rule-based averages move only to \texttt{0.0011} and \texttt{-0.0050}. ML therefore benefits more from the earlier, more favorable window, especially after costs, but the advantage remains modest rather than decisive.
 
-Within the ML group, the outputs show a split picture rather than a single dominant winner. Tables~\ref{tab:appendix_table12_nocost} and \ref{tab:appendix_table12_withcost} show that the canonical all-asset long-only averages are led by GRU in both cost regimes, with Logistic Regression also strong and XGBoost weakest on average. The earlier window broadens the leadership set rather than confirming one universal winner: Table~\ref{tab:appendix_c_best_models} shows GRU, LightGBM, and Logistic Regression splitting the best-overall slots evenly in 2020--2024, whereas the 2021--2025 run is dominated by GRU and Logistic Regression. The broader lesson is that extra model complexity does not guarantee more robust out-of-sample trading performance, and model rankings are not regime-invariant.
+Within the ML group, the outputs show a split picture rather than a single dominant winner. Tables~\ref{tab:appendix_table12_nocost} and \ref{tab:appendix_table12_withcost} show that the canonical all-asset long-only averages are led by GRU in both cost regimes, with Logistic Regression also strong and XGBoost weakest on average. The earlier window broadens the leadership set instead of confirming one universal winner: Table~\ref{tab:appendix_c_best_models} shows GRU, LightGBM, and Logistic Regression splitting the best-overall slots evenly in 2020--2024, whereas the 2021--2025 run is dominated by GRU and Logistic Regression. Extra model complexity therefore does not guarantee more robust trading performance.
 
 \subsection{Feature Representation and Strategy Behaviour}
 
-Within the feasible ML configurations, Tables~\ref{tab:appendix_table10_withcost} and \ref{tab:appendix_table11_withcost} show the main-window representation result clearly: standard \texttt{ohlc} inputs outperform \texttt{candle} inputs in the grouped all-asset long-only with-cost comparison (test Sharpe \texttt{0.0255} versus \texttt{0.0195}), while extended feature sets outperform raw feature sets much more clearly (\texttt{0.0472} versus \texttt{-0.0024}). This points to a useful distinction: the current notebook does not support the idea that candlestick inputs are broadly superior, but it does support the view that the paper-aligned extended indicators can help in selected settings. Table~\ref{tab:appendix_c_significance} reinforces that conclusion in the earlier window: significant grouped bootstrap results increase from \texttt{11/90} to \texttt{23/90}, and several of the additional significant rows are \texttt{extended\_vs\_raw} wins. Table~\ref{tab:appendix_c_best_features} also shifts the best-overall feature counts toward \texttt{candle\_extended} and \texttt{ohlc\_extended} only, with \texttt{candle\_extended} taking \texttt{14} of \texttt{24} best-overall slots in 2020--2024. Predictive improvements therefore become easier to detect in the earlier window, yet they remain economically conditional because higher feature richness can still coincide with higher trading activity.
+Within the feasible ML configurations, Tables~\ref{tab:appendix_table10_withcost} and \ref{tab:appendix_table11_withcost} show the main-window representation result clearly: standard \texttt{ohlc} inputs outperform \texttt{candle} inputs in the grouped all-asset long-only with-cost comparison (test Sharpe \texttt{0.0255} versus \texttt{0.0195}), while extended feature sets outperform raw feature sets much more clearly (\texttt{0.0472} versus \texttt{-0.0024}). The current notebook therefore does not support the idea that candlestick inputs are broadly superior, but it does support the view that the paper-aligned extended indicators can help in selected settings. Table~\ref{tab:appendix_c_significance} reinforces that conclusion in the earlier window: significant grouped bootstrap results increase from \texttt{11/90} to \texttt{23/90}, and several of the additional significant rows are \texttt{extended\_vs\_raw} wins. Table~\ref{tab:appendix_c_best_features} similarly shifts the best-overall feature counts toward \texttt{candle\_extended} and \texttt{ohlc\_extended} only. Predictive improvements therefore become easier to detect in the earlier window, yet they remain economically conditional because richer features can still coincide with higher trading activity.
 
-The behavior of short-only strategies deserves explicit discussion because the underperformance is one of the most stable findings in the project. In the canonical with-cost setting, short-only strategies have a negative average Sharpe for every asset, ranging from \texttt{-0.0146} in BTC to \texttt{-0.0345} in ETH. Table~\ref{tab:appendix_c_strategy_mode} shows that the earlier window does not change that diagnosis: the average no-cost short-only Sharpe slips from \texttt{0.0005} to \texttt{-0.0036}, and the with-cost average remains around \texttt{-0.024}. Two mechanisms appear especially important. First, crypto markets over both samples retain enough upside drift that a pure short stance is structurally disadvantaged relative to long-only participation. Second, short-only strategies still trade frequently---about \texttt{1,564} trades on average in the later window and \texttt{1,382} in the earlier one---so even modest predictive errors are quickly magnified by repeated transaction costs. The issue is therefore not only directional accuracy; it is the combination of weaker underlying market drift and high turnover.
+The behavior of short-only strategies deserves explicit discussion because the underperformance is one of the most stable findings in the project. In the canonical with-cost setting, short-only strategies have a negative average Sharpe for every asset, ranging from \texttt{-0.0146} in BTC to \texttt{-0.0345} in ETH. Table~\ref{tab:appendix_c_strategy_mode} shows that the earlier window does not change that diagnosis: the average no-cost short-only Sharpe slips from \texttt{0.0005} to \texttt{-0.0036}, and the with-cost average remains around \texttt{-0.024}. This appears to reflect two forces: crypto markets retain enough upside drift that a pure short stance is structurally disadvantaged, and short-only strategies still trade frequently---about \texttt{1,564} trades on average in the later window and \texttt{1,382} in the earlier one---so even modest predictive errors are quickly magnified by repeated transaction costs.
 
 \subsection{Statistical Significance}
 
@@ -179,33 +176,58 @@ Table~\ref{tab:appendix_c_significance} shows that the earlier window yields mor
 
 \subsection{Equity Curve Analysis}
 
-To avoid crowding the main discussion, the equity-curve figures are moved to Appendix~\ref{app:figures}, and the regime-comparison figures are collected in Appendix~\ref{app:regime}. The appendix figure sets have distinct roles. The main-window equity curves show the asset-by-asset shape of the canonical 2021--2025 backtests, always comparing buy-and-hold with the best feasible configuration per model. The Appendix C figures then summarize the cross-window regime comparison in aggregate.
-
-The long-only curves in Appendix~\ref{app:fig_long_only} show four related stories. In BTC and XRP, buy-and-hold retains the strongest trend capture while most active strategies remain flatter after costs; in ETH, selected active models narrow the gap but do not sustain clear dominance; in SOL, active strategies can occasionally compete in a harder asset, but the paths remain uneven and model dispersion is wider. The long-short curves in Appendix~\ref{app:fig_long_short} are noisier in all four assets: BTC and ETH illustrate strong cost drag and flatter post-fee trajectories, while SOL and XRP display episodic bursts that are not stable enough to overturn the summary-table ranking. The short-only curves in Appendix~\ref{app:fig_short_only} are the clearest visual confirmation of the earlier statistical result. Across BTC, ETH, SOL, and XRP, the short-only best-per-model paths fail to accumulate wealth consistently after costs, and several decay steadily. The Appendix C comparison figures then show the same story in aggregate: Figure~\ref{fig:appendix_c_strategy_mode} shows the strategy-mode shift, Figure~\ref{fig:appendix_c_model_family} shows the model-family shift, and Figure~\ref{fig:appendix_c_buyhold} shows that passive exposure also becomes substantially stronger in the earlier window.
+The equity-curve figures are presented in Appendix~\ref{app:figures}, and the regime-comparison figures are collected in Appendix~\ref{app:regime}. The main-window equity curves show the asset-by-asset shape of the canonical 2021--2025 backtests, while the Appendix C figures summarize the cross-window comparison in aggregate.
+The long-only curves in Appendix~\ref{app:fig_long_only} show the clearest active-trading potential: BTC and XRP remain dominated by buy-and-hold after costs, ETH narrows the gap in selected configurations, and SOL is more competitive but also more uneven. The long-short curves in Appendix~\ref{app:fig_long_short} are noisier in all four assets and visually reinforce the cost drag already shown in the tables. The short-only curves in Appendix~\ref{app:fig_short_only} are the clearest confirmation of persistent weakness, with several best-per-model paths decaying steadily after costs. The Appendix C figures show the same story in aggregate: Figure~\ref{fig:appendix_c_strategy_mode} captures the strategy-mode shift, Figure~\ref{fig:appendix_c_model_family} the model-family shift, and Figure~\ref{fig:appendix_c_buyhold} the stronger passive benchmark in the earlier window.
 
 \section{Conclusion, Limitations, and Future Work}
 
 \subsection{Conclusion}
 
-This study asks: To what extent do ML-based trading strategies outperform traditional rule-based strategies and passive buy-and-hold benchmarks in terms of the Sharpe Ratio, once transaction costs and backtesting constraints are applied to major assets such as Bitcoin (BTC), Ethereum (ETH), Ripple (XRP), and Solana (SOL)? Within the canonical 2021--2025 evaluation window, the answer is: only to a limited extent, and not in any broad or robust sense. Machine-learning models can improve on simple rule-based strategies in selected settings, especially before costs, but they do not consistently or statistically reliably outperform buy-and-hold once transaction costs are applied.
+Within the canonical 2021--2025 evaluation window, the answer to our research question is: only to a limited extent, and not in any broad or robust sense. Machine-learning models can improve on simple rule-based strategies in selected settings, especially before costs, but they do not consistently or statistically reliably outperform buy-and-hold once transaction costs are applied.
 
 The additional 2020--2024 robustness rerun changes the strength of the results more than their ranking. Long-only and long-short strategies---especially ML configurations---become materially stronger in the earlier window, and more grouped tests and usefulness tests turn significant. That confirms that the framework is regime-sensitive rather than uniformly weak. Even so, the broader conclusion does not flip. Short-only remains weak across both windows, transaction costs continue to erode long-short and high-turnover strategies, and none of the best configurations significantly outperform buy-and-hold in either sample. The evidence therefore supports a narrow claim: ML-based cryptocurrency strategies can outperform simple rules in selected settings, and they look better in friendlier regimes, but they do not deliver broad, cost-robust, statistically reliable superiority over passive buy-and-hold.
 
 \subsection{Limitations}
 
-Several limitations materially qualify the findings. First, even with the additional 2020--2024 rerun, the study still relies on fixed-window comparisons rather than rolling or expanding walk-forward retraining. The second window improves the regime-sensitivity evidence, but it does not establish whether the observed rankings would persist under continuously updated historical partitions. In a non-stationary market such as cryptocurrency, this remains an important limitation.
+Several limitations materially qualify the findings. First, even with the additional 2020--2024 rerun, the study still relies on fixed-window comparisons rather than rolling or expanding walk-forward retraining. The second window improves the regime-sensitivity evidence, but it does not show whether the observed rankings would persist under continuously updated historical partitions.
 
-Second, the predictive target is binary directional classification rather than return regression. This means that a correct prediction on a very small move is treated the same as a correct prediction on a much larger economically important move. The thresholding rules partially mitigate this by filtering for higher-confidence signals, but they do not eliminate the mismatch between directional classification and return magnitude.
+Second, the predictive target is binary directional classification rather than return regression. A correct prediction on a very small move is therefore treated the same as a correct prediction on a much larger economically important move. The thresholding rules partially mitigate this by filtering for higher-confidence signals, but they do not remove the mismatch between directional classification and return magnitude.
 
-Third, the backtest remains stylized. It applies exchange-style transaction fees, but it does not model slippage, execution delay, order-book depth, market impact, borrowing costs for shorting, margin requirements, or liquidation dynamics. As a result, the reported outcomes should be interpreted as conservative relative to a frictionless backtest, but still simpler than a live-trading environment.
+Third, the backtest remains stylized. It applies exchange-style transaction fees, but it does not model slippage, execution delay, order-book depth, market impact, borrowing costs for shorting, margin requirements, or liquidation dynamics.
 
-Fourth, the study operates at hourly frequency. This preserves an intraday research design and aligns with the reference paper, but it also increases exposure to noise and to turnover-driven cost drag. Lower-frequency strategies may behave differently.
+Fourth, the models trade at hourly frequency. This preserves an intraday research design and aligns with the reference paper, but it also increases exposure to noise and to turnover-driven cost drag.
 
-Finally, the submitted version does not include a dedicated explainability analysis or formal feature-selection stage. The engineered features are intentionally paper-aligned, but the project does not yet isolate which indicators contribute most to predictive performance, nor does it test dimensionality-reduction alternatives systematically.
+Finally, the dataset is exchange-specific and limited to four assets, so some conclusions may nor reflect the full cryptocurrency universe. The current version also does not include a dedicated explainability analysis or formal feature-selection stage, so it does not isolate which indicators contribute most to predictive performance or test dimensionality-reduction alternatives systematically.
 
 \subsection{Future Work}
 
 The main contribution of the project is comparative and cautionary rather than celebratory. Under two fixed historical windows and a realistic fee model, the practical value of active cryptocurrency trading remains limited, and the margin between machine learning and simpler alternatives is much narrower than headline predictive results might suggest. Future work should move from fixed-window comparison to walk-forward re-estimation, add explicit regime labelling, incorporate richer backtest frictions, explore lower-frequency variants, and extend explainability analysis to determine whether any observed advantage survives under stronger robustness checks.
+
+
+\begingroup
+\singlespacing
+\begin{thebibliography}{99}
+
+\bibitem{} Anghel, D.-G. (2021). \textit{A reality check on trading rule performance in the cryptocurrency market: Machine learning vs. technical analysis}. Finance Research Letters, 39, 101655. https://doi.org/10.1016/j.frl.2020.101655
+
+\bibitem{} Belalova, G., Mannanova, S., and Karimov, B. (2023). \textit{The Future of Bitcoin Price Predictions Integrating Deep Learning and the Hybrid Model Method}. Proceedings of the 7th International Conference on Future Networks and Distributed Systems, 202--211. https://doi.org/10.1145/3644713.3644739
+
+\bibitem{} Chatzis, S., et al. (2025). Study cited in Section 2 on machine-learning performance in cryptocurrency trading.
+
+\bibitem{} Goutte, S., Le, H.-V., Liu, F., and von Mettenheim, H.-J. (2023). \textit{Deep learning and technical analysis in cryptocurrency market}. Finance Research Letters, 54, 103809. https://doi.org/10.1016/j.frl.2023.103809
+
+\bibitem{} Hudson, R., and Urquhart, A. (2021). \textit{Technical trading and cryptocurrencies}. Annals of Operations Research, 297, 191--220. https://doi.org/10.1007/s10479-019-03357-1
+
+\bibitem{} Jabbar, A., and Jalil, S.~Q. (2024). \textit{A Comprehensive Analysis of Machine Learning Models for Algorithmic Trading of Bitcoin}. CoRR, abs/2407.18334. https://doi.org/10.48550/arXiv.2407.18334
+
+\bibitem{} Liu, et al. (2024). Study cited in Section 2 on the behaviour of technical indicators in cryptocurrency markets.
+
+\bibitem{} Ratia, K. (2023). \textit{Technical analysis in cryptocurrency trading}. Theseus.
+
+\bibitem{} Svogun, D., and Baz\'an-Palomino, W. (2022). \textit{Technical analysis in cryptocurrency markets: Do transaction costs and bubbles matter?} Journal of International Financial Markets, Institutions and Money, 79, 101601. https://doi.org/10.1016/j.intfin.2022.101601
+
+\end{thebibliography}
+\endgroup
 
 \clearpage
 \appendix
