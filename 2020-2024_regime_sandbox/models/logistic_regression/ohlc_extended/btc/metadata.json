@@ -1,0 +1,34 @@
+{
+  "artifacts": [
+    "long_model.joblib",
+    "short_model.joblib",
+    "scaler.joblib",
+    "metadata.json"
+  ],
+  "asset": "BTC",
+  "feature_set": "ohlc_extended",
+  "features": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "number_of_trades",
+    "volume",
+    "hour_sin",
+    "hour_cos",
+    "sma_15",
+    "sma_20",
+    "sma_25",
+    "sma_30",
+    "rsi_15",
+    "rsi_20",
+    "rsi_25",
+    "rsi_30",
+    "macd_line",
+    "macd_hist",
+    "wr_14",
+    "so_14",
+    "mfi_14"
+  ],
+  "model": "Logistic Regression"
+}

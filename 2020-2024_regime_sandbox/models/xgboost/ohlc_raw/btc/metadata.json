@@ -1,0 +1,20 @@
+{
+  "artifacts": [
+    "long_model.joblib",
+    "short_model.joblib",
+    "metadata.json"
+  ],
+  "asset": "BTC",
+  "feature_set": "ohlc_raw",
+  "features": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "number_of_trades",
+    "volume",
+    "hour_sin",
+    "hour_cos"
+  ],
+  "model": "XGBoost"
+}

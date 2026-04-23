@@ -1,0 +1,6 @@
+Window,Model,Best Overall Count
+2020-2024,GRU,8
+2020-2024,LightGBM,8
+2020-2024,Logistic Regression,8
+2021-2025,GRU,12
+2021-2025,Logistic Regression,12
