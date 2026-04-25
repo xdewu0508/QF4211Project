@@ -1,0 +1,25 @@
+Population,Asset,Model,Feature Set,Strategy Mode,Cost Regime,Mean Net Return,p-value vs 0,Mean Excess Return vs BuyHold,p-value vs BuyHold,Block Length,Bootstrap Iterations
+feasible,BTC,GRU,candle_extended,long_only,no_cost,1.9715721326537285e-05,0.0565,-2.580266311412545e-05,0.7253,22,10000
+feasible,BTC,GRU,candle_extended,long_only,with_cost,2.202891414513825e-06,0.4403,-4.331549302614891e-05,0.8425,22,10000
+feasible,BTC,Logistic Regression,ohlc_extended,long_short,no_cost,8.644242633693773e-06,0.1853,-3.482880994420796e-05,0.7725,22,10000
+feasible,BTC,Logistic Regression,ohlc_extended,long_short,with_cost,-1.6515808582695564e-05,0.9581,-5.995685091731944e-05,0.8948,22,10000
+feasible,BTC,Logistic Regression,ohlc_extended,short_only,no_cost,6.65046551650645e-06,0.2293,-3.682258706139528e-05,0.7873,22,10000
+feasible,BTC,Logistic Regression,ohlc_extended,short_only,with_cost,-1.7677319374658817e-05,0.9776,-6.111836170928269e-05,0.899,22,10000
+feasible,ETH,GRU,ohlc_extended,long_only,no_cost,7.173116968167467e-07,0.3089,-4.605498665606551e-05,0.7368,22,10000
+feasible,ETH,GRU,ohlc_extended,long_only,with_cost,-8.864273061158262e-07,0.7394,-4.7658725658998084e-05,0.7441,22,10000
+feasible,ETH,Logistic Regression,candle_extended,long_short,no_cost,1.377195167702247e-05,0.1517,-2.9139107674438027e-05,0.6459,22,10000
+feasible,ETH,Logistic Regression,candle_extended,long_short,with_cost,3.208571395332445e-06,0.4136,-3.96704777128502e-05,0.6974,22,10000
+feasible,ETH,Logistic Regression,ohlc_raw,short_only,no_cost,1.696253080511637e-05,0.2748,-2.5948528546344126e-05,0.6057,22,10000
+feasible,ETH,Logistic Regression,ohlc_raw,short_only,with_cost,-3.194912092343666e-05,0.8689,-7.48281700316193e-05,0.7945,22,10000
+feasible,SOL,GRU,candle_extended,long_only,no_cost,1.935691212110515e-05,0.0497,-8.947585348277333e-06,0.5477,22,10000
+feasible,SOL,GRU,candle_extended,long_only,with_cost,1.5572088074184328e-05,0.0878,-1.2732409395198155e-05,0.5642,22,10000
+feasible,SOL,GRU,candle_extended,long_short,no_cost,4.430293677804157e-05,0.0037,1.5998439308659086e-05,0.4343,22,10000
+feasible,SOL,GRU,candle_extended,long_short,with_cost,3.705403648478649e-05,0.0106,8.74953901540401e-06,0.4647,22,10000
+feasible,SOL,GRU,ohlc_extended,short_only,no_cost,1.1092019358628768e-05,0.2731,-1.7212478110753717e-05,0.5803,22,10000
+feasible,SOL,GRU,ohlc_extended,short_only,with_cost,1.020538420212405e-06,0.4813,-2.728395904917008e-05,0.6211,22,10000
+feasible,XRP,GRU,candle_extended,long_only,no_cost,3.073657655266738e-05,0.0321,-0.00012735321179828908,0.9122,22,10000
+feasible,XRP,GRU,candle_extended,long_only,with_cost,2.4065022300467978e-05,0.0709,-0.00013402476605048848,0.9233,22,10000
+feasible,XRP,Logistic Regression,ohlc_extended,long_short,no_cost,4.895019441337388e-06,0.462,-0.00014887494154948745,0.8977,22,10000
+feasible,XRP,Logistic Regression,ohlc_extended,long_short,with_cost,-5.3491664297458885e-05,0.9091,-0.00020722961504500588,0.9593,22,10000
+feasible,XRP,Logistic Regression,ohlc_extended,short_only,no_cost,-1.5021955196265611e-05,0.6581,-0.00016879191618709044,0.9212,22,10000
+feasible,XRP,Logistic Regression,ohlc_extended,short_only,with_cost,-7.155204482494666e-05,0.9614,-0.00022528999557249366,0.9694,22,10000
