@@ -1,20 +1,20 @@
-# Core numerical and data stack
+# core numerical and data stack
 numpy>=1.26,<2.0
 pandas>=2.2,<3.0
 joblib>=1.3,<2.0
 
-# Visualization and notebook runtime
+# visualization and notebook runtime
 matplotlib>=3.8,<4.0
 notebook>=7.0,<8.0
 ipykernel>=6.0,<7.0
 
-# Classical and tree-based models
+# classical and tree-based models
 scikit-learn>=1.4,<2.0
 xgboost>=2.0,<3.0
 lightgbm>=4.0,<5.0
 
-# Deep-learning model used by the GRU pipeline
+# deep-learning model used by the GRU pipeline
 tensorflow>=2.16,<2.19
 
-# Sandbox raw-data download helper
+# sandbox raw-data download helper
 requests>=2.31,<3.0
