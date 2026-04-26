@@ -1,10 +1,10 @@
 # DSE/QF4211 Project
 
-This repository studies whether active cryptocurrency trading strategies can outperform passive buy-and-hold benchmarks after transaction costs and realistic backtesting constraints. The project compares machine-learning, rule-based, and buy-and-hold strategies on hourly Binance spot data for Bitcoin, Ethereum, Ripple, and Solana.
+This repository studies whether machine-learning-based cryptocurrency trading strategies still deliver economic value after transaction costs. The project answers that question by comparing machine-learning, rule-based, and passive buy-and-hold strategies on hourly Binance spot data for Bitcoin, Ethereum, XRP, and Solana.
 
 The main research question is:
 
-> To what extent do ML-based trading strategies outperform traditional rule-based strategies and passive buy-and-hold benchmarks in terms of Sharpe Ratio, once transaction costs and backtesting constraints are applied to major crypto assets?
+> Do machine-learning-based cryptocurrency trading strategies still deliver economic value after transaction costs when compared with rule-based strategies and a passive buy-and-hold benchmark?
 
 ## Reproducibility Overview
 

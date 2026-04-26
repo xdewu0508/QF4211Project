@@ -6,7 +6,7 @@ This guide is for maintainers or collaborators who want the lower-level implemen
 
 The project is built around the following research question:
 
-> To what extent do ML-based trading strategies outperform traditional rule-based strategies and passive buy-and-hold benchmarks in terms of the Sharpe Ratio, once transaction costs and backtesting constraints are applied to major assets such as Bitcoin (BTC), Ethereum (ETH), Ripple (XRP), and Solana (SOL)?
+> Do machine-learning-based cryptocurrency trading strategies still deliver economic value after transaction costs when compared with rule-based strategies and a passive buy-and-hold benchmark?
 
 ## Canonical Workflow
 
@@ -16,7 +16,7 @@ The project is built around the following research question:
   - chronological train / validation / test splitting,
   - unified model and rule-based backtests,
   - export of paper-style tables, statistical tests, plots, and standardized trading logs.
-- The synced written submission is [`report/final_report.pdf`](../report/final_report.pdf); the LaTeX source is kept locally and excluded from the cleaned remote snapshot.
+- The synced written submission is [`Final Report Group 3.pdf`](./Final%20Report%20Group%203.pdf).
 
 ## Scope
 
@@ -111,15 +111,16 @@ The project is built around the following research question:
 
 ## Generated Outputs
 
-Running [`project.ipynb`](../project.ipynb) recreates these local-only folders:
+Running [`project.ipynb`](../project.ipynb) recreates the main generated output folders used throughout the repo:
 
 - `data/engineered_features/`
 - `data/split_data/`
 - `data/trading_logs/`
 - `models/`
 - `result/`
+- `report_result/`
 
-These are intentionally ignored in Git in the cleaned repo snapshot.
+These outputs are treated as reproducible artifacts of the notebook and can be refreshed by rerunning the pipeline.
 
 ## Reproducibility Notes
 
