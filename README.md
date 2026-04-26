@@ -1,117 +1,228 @@
-# QF4211 Project
+# DSE/QF4211 Project
 
-This repository contains a comparative study of machine-learning, rule-based, and buy-and-hold cryptocurrency trading strategies on hourly Binance spot data.
+This repository studies whether active cryptocurrency trading strategies can outperform passive buy-and-hold benchmarks after transaction costs and realistic backtesting constraints. The project compares machine-learning, rule-based, and buy-and-hold strategies on hourly Binance spot data for Bitcoin, Ethereum, Ripple, and Solana.
 
-The project asks:
+The main research question is:
 
-> To what extent do ML-based trading strategies outperform traditional rule-based strategies and passive buy-and-hold benchmarks in terms of the Sharpe Ratio, once transaction costs and backtesting constraints are applied to major assets such as Bitcoin (BTC), Ethereum (ETH), Ripple (XRP), and Solana (SOL)?
+> To what extent do ML-based trading strategies outperform traditional rule-based strategies and passive buy-and-hold benchmarks in terms of Sharpe Ratio, once transaction costs and backtesting constraints are applied to major crypto assets?
 
-## Start Here
+## Reproducibility Overview
 
-If you are grading, reviewing, or trying to understand the project quickly, the simplest path is:
+The main reproducibility entry point is [`project.ipynb`](project.ipynb). It takes the raw Binance hourly CSV files under [`data/raw/`](data/raw/) and can regenerate the derived data files, trained model artifacts, trading logs, result tables, statistical tests, and output folders used by the project.
 
-1. Read the final report in [report/final_report.pdf](/Users/wuxuande/PycharmProjects/QF4211Project/report/final_report.pdf).
-2. Open the main pipeline notebook in [project.ipynb](/Users/wuxuande/PycharmProjects/QF4211Project/project.ipynb).
-3. Use [docs/DeveloperGuide.md](/Users/wuxuande/PycharmProjects/QF4211Project/docs/DeveloperGuide.md) only if you want lower-level implementation detail.
+The repository includes generated artifacts for inspection, but these should be treated as reproducible outputs of the notebook:
+
+- [`data/engineered_features/`](data/engineered_features/): engineered feature datasets by asset.
+- [`data/split_data/`](data/split_data/): chronological train, validation, and test splits.
+- [`data/trading_logs/`](data/trading_logs/): standardized per-configuration trading logs and unified experiment summaries.
+- [`models/`](models/): fitted ML model artifacts and metadata.
+- [`result/`](result/): full generated output from the main experiment pipeline.
+- [`report_result/`](report_result/): curated result subset used for the report-facing analysis.
+
+[`result_analysis.ipynb`](result_analysis.ipynb) reproduces the report tables from the generated result files. For simplicity, the relevant analyzed outputs are parked under [`report_result/`](report_result/), while [`result/`](result/) contains the broader full output set from the main pipeline.
+
+## Project Scope
+
+- Assets: `BTC`, `ETH`, `XRP`, `SOL`
+- Market data: Binance spot hourly klines
+- Main sample in the included splits: `2021-01-01` to `2025-12-31`
+- Train/validation/test split: chronological `50% / 25% / 25%`
+- Transaction cost: `0.035%` per unit change in position
+- Random seed: `42`
+
+Strategy families:
+
+- Buy-and-Hold
+- Logistic Regression
+- XGBoost
+- LightGBM
+- GRU
+- SMA
+- RSI
+
+Feature sets:
+
+- `ohlc_raw`
+- `candle_raw`
+- `ohlc_extended`
+- `candle_extended`
+
+Strategy modes:
+
+- `long_only`
+- `short_only`
+- `long_short`
+
+Cost regimes:
+
+- `with_cost`
+- `no_cost`
 
 ## Repository Structure
 
-- [project.ipynb](/Users/wuxuande/PycharmProjects/QF4211Project/project.ipynb): the single authoritative research pipeline.
-- [report/final_report.pdf](/Users/wuxuande/PycharmProjects/QF4211Project/report/final_report.pdf): final written report.
-- [requirements.txt](/Users/wuxuande/PycharmProjects/QF4211Project/requirements.txt): Python environment needed to run the notebooks.
-- [docs/DeveloperGuide.md](/Users/wuxuande/PycharmProjects/QF4211Project/docs/DeveloperGuide.md): implementation notes for maintainers or technical readers.
-- [docs/reference](/Users/wuxuande/PycharmProjects/QF4211Project/docs/reference): reference paper and supporting course materials.
-- [data/raw](/Users/wuxuande/PycharmProjects/QF4211Project/data/raw): tracked raw Binance hourly input files used by the main notebook.
-- [2020-2024_regime_sandbox](/Users/wuxuande/PycharmProjects/QF4211Project/2020-2024_regime_sandbox): optional sandbox for the separate 2020-2024 robustness rerun.
+- [`project.ipynb`](project.ipynb): main end-to-end experiment pipeline.
+- [`result_analysis.ipynb`](result_analysis.ipynb): report-table reproduction notebook.
+- [`requirements.txt`](requirements.txt): Python dependencies for the notebooks.
+- [`data/raw/`](data/raw/): required raw Binance hourly input files.
+- [`data/engineered_features/`](data/engineered_features/): generated feature CSVs.
+- [`data/split_data/`](data/split_data/): generated chronological train/validation/test splits.
+- [`data/trading_logs/`](data/trading_logs/): generated trading logs and unified experiment summary.
+- [`models/`](models/): generated trained model artifacts.
+- [`result/`](result/): full generated result outputs from the main pipeline.
+- [`report_result/`](report_result/): curated outputs used for the report-facing analysis.
+- [`2020-2024_regime_sandbox/`](2020-2024_regime_sandbox/): separate robustness rerun for the 2020-2024 regime-shift sample.
 
-The following folders are generated by notebook execution and may be present locally after a run:
+## Setup
 
-- [data/engineered_features](/Users/wuxuande/PycharmProjects/QF4211Project/data/engineered_features)
-- [data/split_data](/Users/wuxuande/PycharmProjects/QF4211Project/data/split_data)
-- [data/trading_logs](/Users/wuxuande/PycharmProjects/QF4211Project/data/trading_logs)
-- [models](/Users/wuxuande/PycharmProjects/QF4211Project/models)
-- [result](/Users/wuxuande/PycharmProjects/QF4211Project/result)
+Create a Python environment and install the required packages:
 
-## What `project.ipynb` Does
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-The main notebook runs the full study end to end:
+Launch Jupyter:
 
-1. Loads hourly raw Binance spot data for BTC, ETH, XRP, and SOL.
-2. Builds the paper-aligned feature sets and additional engineered diagnostics.
-3. Creates strict chronological train, validation, and test splits.
-4. Trains and evaluates:
-   - Logistic Regression
-   - XGBoost
-   - LightGBM
-   - GRU
-   - SMA
-   - RSI
-   - Buy-and-Hold
-5. Applies validation-based threshold selection and feasibility filtering.
-6. Exports trading logs, summary CSVs, grouped statistical tests, and report-facing tables and figures.
+```bash
+jupyter notebook
+```
 
-## Study Scope
+The dependencies include the numerical stack, notebook runtime, scikit-learn, XGBoost, LightGBM, TensorFlow, and `requests` for the sandbox raw-data download helper.
 
-- Assets: BTC, ETH, XRP, SOL
-- Frequency: hourly
-- Feature sets:
-  - `ohlc_raw`
-  - `candle_raw`
-  - `ohlc_extended`
-  - `candle_extended`
-- Strategy modes:
-  - `long_only`
-  - `short_only`
-  - `long_short`
-- Cost regimes:
-  - `with_cost`
-  - `no_cost`
+## Running the Main Pipeline
 
-## Typical Workflow
+Open [`project.ipynb`](project.ipynb) from the repository root and run the notebook sequentially from top to bottom.
 
-### If you only want to understand the project
+Before running, check the configuration cell:
 
-1. Read [report/final_report.pdf](/Users/wuxuande/PycharmProjects/QF4211Project/report/final_report.pdf).
-2. Skim the high-level section headers in [project.ipynb](/Users/wuxuande/PycharmProjects/QF4211Project/project.ipynb).
-3. Use [docs/DeveloperGuide.md](/Users/wuxuande/PycharmProjects/QF4211Project/docs/DeveloperGuide.md) if you want model, feature, thresholding, or backtest details.
+```python
+FORCE_DATA_PREP = False
+RUN_UNIFIED_GRID = False
+GLOBAL_SEED = 42
+```
 
-### If you want to reproduce the main results
+Use:
 
-1. Create a Python environment and install [requirements.txt](/Users/wuxuande/PycharmProjects/QF4211Project/requirements.txt).
-2. Open [project.ipynb](/Users/wuxuande/PycharmProjects/QF4211Project/project.ipynb) in Jupyter.
-3. Run the notebook from top to bottom.
-4. Let the notebook recreate the derived folders locally under `data/`, `models/`, and `result/`.
+```python
+FORCE_DATA_PREP = True
+RUN_UNIFIED_GRID = True
+```
 
-### If you want to inspect the robustness rerun
+to fully regenerate engineered features, train/validation/test splits, model artifacts, trading logs, summary tables, statistical tests, and result outputs from the raw CSV files.
 
-1. Open [2020-2024_regime_sandbox/regime_shift_sandbox.ipynb](/Users/wuxuande/PycharmProjects/QF4211Project/2020-2024_regime_sandbox/regime_shift_sandbox.ipynb).
-2. Run it inside the sandbox only.
-3. Treat its outputs as separate from the main project outputs.
+Use:
 
-## Main Inputs And Outputs
+```python
+FORCE_DATA_PREP = False
+RUN_UNIFIED_GRID = False
+```
 
-### Inputs
+for a faster rerun of downstream reporting sections when the generated artifacts already exist.
 
-- Main raw data: [data/raw](/Users/wuxuande/PycharmProjects/QF4211Project/data/raw)
-- Optional sandbox raw data: [2020-2024_regime_sandbox/data/raw](/Users/wuxuande/PycharmProjects/QF4211Project/2020-2024_regime_sandbox/data/raw)
-- Reference materials: [docs/reference](/Users/wuxuande/PycharmProjects/QF4211Project/docs/reference)
+## Main Pipeline Workflow
 
-### Outputs produced by `project.ipynb`
+[`project.ipynb`](project.ipynb) performs the full workflow:
 
-- Engineered features under [data/engineered_features](/Users/wuxuande/PycharmProjects/QF4211Project/data/engineered_features)
-- Chronological splits under [data/split_data](/Users/wuxuande/PycharmProjects/QF4211Project/data/split_data)
-- Trading logs under [data/trading_logs](/Users/wuxuande/PycharmProjects/QF4211Project/data/trading_logs)
-- Trained model artifacts under [models](/Users/wuxuande/PycharmProjects/QF4211Project/models)
-- Summary outputs, tables, figures, and tests under [result](/Users/wuxuande/PycharmProjects/QF4211Project/result)
+1. Loads raw hourly Binance CSV files from [`data/raw/`](data/raw/).
+2. Standardizes timestamps and OHLCV columns.
+3. Builds paper-aligned OHLC, candlestick, raw, and extended feature sets.
+4. Creates next-hour return labels for long-side and short-side prediction.
+5. Splits each asset chronologically into train, validation, and test sets.
+6. Trains and evaluates Logistic Regression, XGBoost, LightGBM, GRU, SMA, RSI, and buy-and-hold strategies.
+7. Selects validation thresholds using precision-first feasibility rules.
+8. Applies transaction-cost and no-cost backtests.
+9. Exports trading logs, trained models, summary CSVs, paper-style tables, statistical tests, and supporting diagnostics.
+
+## Model Artifacts
+
+[`models/`](models/) stores trained model artifacts generated by [`project.ipynb`](project.ipynb), organized by model family, feature set, and asset.
+
+Examples:
+
+- `models/logistic_regression/ohlc_raw/btc/`
+- `models/xgboost/candle_extended/eth/`
+- `models/lightgbm/ohlc_extended/sol/`
+- `models/gru/candle_raw/xrp/`
+
+Typical contents:
+
+- Logistic Regression: `long_model.joblib`, `short_model.joblib`, `scaler.joblib`, `metadata.json`
+- XGBoost and LightGBM: `long_model.joblib`, `short_model.joblib`, `metadata.json`
+- GRU: `long_model.keras`, `short_model.keras`, `long_scaler.joblib`, `short_scaler.joblib`, `metadata.json`
+
+The long model estimates upward next-hour movement probabilities. The short model estimates downward next-hour movement probabilities. These artifacts are included for inspection and can be regenerated by rerunning the main notebook.
+
+## Result Outputs
+
+The full main-pipeline outputs are under [`result/`](result/).
+
+Top-level summaries:
+
+- `result/summary_all_strategies_raw.csv`: full unified experiment summary before feasibility filtering.
+- `result/summary_all_strategies_feasible.csv`: feasible configurations used for the main analysis.
+
+
+Buy-and-hold outputs:
+
+- `result/buy_and_hold/*_backtest.csv`: per-asset buy-and-hold backtests.
+- `result/buy_and_hold/summary_all_assets.csv`: buy-and-hold summary across assets.
+
+Paper-table outputs:
+
+- `result/paper_tables/table_detail_all_configs.csv`: detailed table for all configurations.
+- `result/paper_tables/table_detail_feasible_configs.csv`: detailed table for feasible configurations.
+- `result/paper_tables/table8_*_feasible.csv`: long-only feasible strategy detail tables.
+- `result/paper_tables/table9_*_feasible.csv`: short-only feasible strategy detail tables.
+- `result/paper_tables/table_long_short_*_feasible.csv`: long-short feasible strategy detail tables.
+- `result/paper_tables/table10_representation_*_feasible.csv`: OHLC versus candlestick representation comparisons.
+- `result/paper_tables/table11_feature_type_*_feasible.csv`: raw versus extended feature comparisons.
+- `result/paper_tables/table12_model_average_*_feasible.csv`: model-average comparisons.
+- `result/paper_tables/table10_feasible_bundle.csv`: combined Table 10-style representation comparisons.
+- `result/paper_tables/table11_feasible_bundle.csv`: combined Table 11-style feature-type comparisons.
+- `result/paper_tables/table12_feasible_bundle.csv`: combined Table 12-style model-average comparisons.
+- `result/paper_tables/best_feature_configs_feasible.csv`: best feasible rows by asset, model, feature set, strategy mode, and cost regime.
+- `result/paper_tables/best_model_configs_feasible.csv`: best feasible rows by asset, model, strategy mode, and cost regime.
+- `result/paper_tables/best_overall_configs_feasible.csv`: best feasible rows by asset, strategy mode, and cost regime.
+- `result/paper_tables/cost_comparison_by_configuration_feasible.csv`: paired no-cost versus with-cost comparison by configuration.
+- `result/paper_tables/cost_drag_summary_by_asset_model_strategy_feasible.csv`: transaction-cost drag summary by asset, model, and strategy mode.
+- `result/paper_tables/grouped_table_overview_feasible.csv`: combined overview of grouped Table 10/11/12-style outputs.
+- `result/paper_tables/best_config_overview_feasible.csv`: representative feasible best-configuration overview.
+- `result/paper_tables/infeasible_config_overview.csv`: summary of infeasible configurations excluded from the main analysis.
+
+Statistical-test outputs:
+
+- `result/stat_tests/paper_group_bootstrap_tests_feasible.csv`: grouped bootstrap tests on feasible configurations.
+- `result/stat_tests/usefulness_tests_best_overall_feasible.csv`: usefulness tests for best feasible strategies.
+
+## Report Table Reproduction
+
+Run [`result_analysis.ipynb`](result_analysis.ipynb) after the main pipeline outputs exist. This notebook reads generated result files and reproduces the tables used in the report-facing analysis.
+
+The relevant analyzed outputs are also collected under [`report_result/`](report_result/), including:
+
+- buy-and-hold summaries,
+- selected paper tables,
+- statistical-test outputs,
+- regime-comparison outputs.
+
+Users who want the complete generated output set should inspect [`result/`](result/). Users who want the concise report-facing subset should inspect [`report_result/`](report_result/).
+
+## Regime-Shift Sandbox
+
+[`2020-2024_regime_sandbox/`](2020-2024_regime_sandbox/) contains a separate robustness rerun for the 2020-2024 sample window. It follows the same feature-engineering, modelling, backtesting, thresholding, and reporting logic as the main notebook, but writes all generated outputs inside the sandbox directory.
+
+The sandbox notebook is:
+
+- [`2020-2024_regime_sandbox/regime_shift_sandbox.ipynb`](2020-2024_regime_sandbox/regime_shift_sandbox.ipynb)
+
+The sandbox can download monthly Binance spot 1-hour klines and rebuild sandbox-local raw CSVs. Its outputs are intentionally separate from the main 2021-2025 run.
 
 ## Reproducibility Notes
 
-- The notebook seeds Python, NumPy, and TensorFlow from a shared global seed.
-- TensorFlow deterministic settings are enabled on a best-effort basis, but deep-learning results can still vary slightly across hardware or backend combinations.
-- Binance raw files may mix millisecond and microsecond timestamps; the notebook normalizes them row-wise before feature engineering.
-- If generated folders already exist and you want all outputs refreshed under the current logic, rerun [project.ipynb](/Users/wuxuande/PycharmProjects/QF4211Project/project.ipynb) from the top.
-
-## Where To Look For More Detail
-
-- Project workflow and implementation notes: [docs/DeveloperGuide.md](/Users/wuxuande/PycharmProjects/QF4211Project/docs/DeveloperGuide.md)
-- Final report: [report/final_report.pdf](/Users/wuxuande/PycharmProjects/QF4211Project/report/final_report.pdf)
+- Run notebooks from the repository root unless using the sandbox notebook, which resolves its own sandbox path.
+- The main raw input files are expected under [`data/raw/`](data/raw/).
+- The notebook seeds Python, NumPy, and TensorFlow with `GLOBAL_SEED = 42`.
+- TensorFlow deterministic settings are enabled on a best-effort basis, so GRU results can vary slightly across hardware or backend combinations.
+- Binance timestamp units are normalized during preprocessing.
+- A full grid rerun can take substantial time because it trains multiple models across assets, feature sets, strategy modes, and cost regimes.
